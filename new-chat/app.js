@@ -566,7 +566,7 @@ function renderWritingGuide() {
   elements.writingGuide.style.setProperty("--word-line-width", `${lineChars}em`);
   elements.pageGuide.style.setProperty("--word-page-height", `${pageLines * metrics.lineHeight}px`);
   elements.writingGuide.innerHTML = buildWritingGuide(chapter.body, lineChars);
-  elements.pageGuide.innerHTML = buildPageGuide(pageLines, metrics);
+  elements.pageGuide.innerHTML = buildPageGuide(chapter.body, lineChars, pageLines, metrics);
 }
 
 function scheduleGuideRender() {
@@ -607,34 +607,32 @@ function editorMetrics() {
   };
 }
 
-function buildPageGuide(pageLines, metrics) {
+function buildPageGuide(text, lineChars, pageLines, metrics) {
+  const safeLineChars = normalizeLineChars(lineChars);
   const safePageLines = normalizePageLines(pageLines);
-  const pageHeight = safePageLines * metrics.lineHeight;
-  const viewportHeight = elements.chapterBody.clientHeight || 0;
-  if (!viewportHeight || !pageHeight) return "";
+  if (!text) return "";
+
+  let visualLineCount = 0;
+  text.split("\n").forEach((line) => {
+    visualLineCount += Math.max(1, Math.ceil(Array.from(line).length / safeLineChars));
+  });
 
   const marks = [];
-  for (let pageIndex = 1; pageIndex <= 4; pageIndex += 1) {
-    const top = metrics.paddingTop + pageHeight * pageIndex - 1;
-    if (top > viewportHeight + metrics.lineHeight) break;
-    marks.push(`<span class="page-mark" data-page="${pageIndex + 1}" style="top:${top}px"></span>`);
+  for (let lineNumber = safePageLines; lineNumber < visualLineCount; lineNumber += safePageLines) {
+    const top = metrics.paddingTop + lineNumber * metrics.lineHeight - 1;
+    const pageNumber = Math.floor(lineNumber / safePageLines) + 1;
+    marks.push(`<span class="page-mark" data-page="${pageNumber}" style="top:${top}px"></span>`);
   }
 
-  if (!marks.length) {
-    const visibleTop = Math.max(metrics.paddingTop + metrics.lineHeight * 8, viewportHeight * 0.72);
-    const visibleBottom = viewportHeight - metrics.paddingBottom - metrics.lineHeight * 1.5;
-    const top = Math.max(metrics.paddingTop + metrics.lineHeight * 3, Math.min(visibleTop, visibleBottom));
-    marks.push(`<span class="page-mark is-fixed-preview" data-page="2" style="top:${top}px"></span>`);
-  }
-
-  return `<span class="page-guide-spacer" style="height:${viewportHeight}px"></span>${marks.join("")}`;
+  const height = metrics.paddingTop + visualLineCount * metrics.lineHeight + metrics.paddingBottom;
+  return `<span class="page-guide-spacer" style="height:${height}px"></span>${marks.join("")}`;
 }
 
 function syncGuideScroll() {
   elements.writingGuide.scrollTop = elements.chapterBody.scrollTop;
   elements.writingGuide.scrollLeft = elements.chapterBody.scrollLeft;
-  elements.pageGuide.scrollTop = 0;
-  elements.pageGuide.scrollLeft = 0;
+  elements.pageGuide.scrollTop = elements.chapterBody.scrollTop;
+  elements.pageGuide.scrollLeft = elements.chapterBody.scrollLeft;
 }
 
 function cursorVisualLine(text, cursor, lineChars) {

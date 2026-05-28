@@ -789,10 +789,6 @@ textarea {
   pointer-events: none;
 }
 
-.page-guide .page-mark.is-fixed-preview {
-  opacity: 0.82;
-}
-
 .page-guide .page-mark::after {
   position: absolute;
   right: 0;
@@ -938,6 +934,10 @@ body.chapter-list-mode .sidebar,
 body.chapter-list-mode .topbar,
 body.project-list-mode .editor-layout,
 body.chapter-list-mode .editor-layout {
+  display: none !important;
+}
+
+body:not(.editor-mode) .editor-layout {
   display: none !important;
 }
 
