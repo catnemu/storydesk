@@ -104,6 +104,7 @@ const elements = {
 
 let appState = loadAppState();
 let saveTimer = null;
+let guideRenderTimer = null;
 let activeTheme = loadTheme();
 let storyDbPromise = null;
 let currentView = "projects";
@@ -465,7 +466,23 @@ function openChapterForWriting(chapterId) {
   currentView = "editor";
   render();
   setFocusMode(true);
+  moveEditorToEnd();
   scheduleSave();
+}
+
+function moveEditorToEnd() {
+  const body = elements.chapterBody;
+  const end = body.value.length;
+  window.requestAnimationFrame(() => {
+    body.focus();
+    body.setSelectionRange(end, end);
+    body.scrollTop = body.scrollHeight;
+    syncGuideScroll();
+    window.requestAnimationFrame(() => {
+      body.scrollTop = body.scrollHeight;
+      syncGuideScroll();
+    });
+  });
 }
 
 function backToChapterIndex() {
@@ -548,6 +565,14 @@ function renderWritingGuide() {
   elements.pageGuide.innerHTML = buildPageGuide(pageLines, metrics);
 }
 
+function scheduleGuideRender() {
+  window.clearTimeout(guideRenderTimer);
+  guideRenderTimer = window.setTimeout(() => {
+    renderWritingGuide();
+    syncGuideScroll();
+  }, 90);
+}
+
 function buildWritingGuide(text, lineChars) {
   const safeLineChars = normalizeLineChars(lineChars);
   if (!text) {
@@ -589,6 +614,13 @@ function buildPageGuide(pageLines, metrics) {
     const top = metrics.paddingTop + pageHeight * pageIndex - 1;
     if (top > viewportHeight + metrics.lineHeight) break;
     marks.push(`<span class="page-mark" data-page="${pageIndex + 1}" style="top:${top}px"></span>`);
+  }
+
+  if (!marks.length) {
+    const visibleTop = Math.max(metrics.paddingTop + metrics.lineHeight * 8, viewportHeight * 0.72);
+    const visibleBottom = viewportHeight - metrics.paddingBottom - metrics.lineHeight * 1.5;
+    const top = Math.max(metrics.paddingTop + metrics.lineHeight * 3, Math.min(visibleTop, visibleBottom));
+    marks.push(`<span class="page-mark is-fixed-preview" data-page="2" style="top:${top}px"></span>`);
   }
 
   return `<span class="page-guide-spacer" style="height:${viewportHeight}px"></span>${marks.join("")}`;
@@ -662,11 +694,20 @@ function updateActiveChapter(field, value) {
   chapter[field] = value;
   chapter.updatedAt = nowIso();
   touchProject();
+  elements.editorUpdatedAt.textContent = formatDateTime(chapter.updatedAt);
+
+  if (field === "body") {
+    renderStats();
+    scheduleGuideRender();
+    scheduleCursorScroll();
+    scheduleSave();
+    return;
+  }
+
   if (field === "title") {
     elements.chapterTitle.value = value;
     elements.editorChapterHeading.value = value;
   }
-  elements.editorUpdatedAt.textContent = formatDateTime(chapter.updatedAt);
   renderChapterList();
   renderProjectList();
   renderIndex();
@@ -685,12 +726,8 @@ function commitBodyChange(nextValue, selectionStart, selectionEnd) {
   touchProject();
   elements.editorUpdatedAt.textContent = formatDateTime(chapter.updatedAt);
   elements.chapterBody.setSelectionRange(selectionStart, selectionEnd);
-  renderChapterList();
-  renderProjectList();
-  renderIndex();
   renderStats();
-  renderWritingGuide();
-  syncGuideScroll();
+  scheduleGuideRender();
   scheduleCursorScroll();
   scheduleSave();
 }
@@ -736,11 +773,9 @@ function runEditorCommand(command) {
   chapter.body = elements.chapterBody.value;
   chapter.updatedAt = nowIso();
   touchProject();
-  renderChapterList();
-  renderIndex();
+  elements.editorUpdatedAt.textContent = formatDateTime(chapter.updatedAt);
   renderStats();
-  renderWritingGuide();
-  syncGuideScroll();
+  scheduleGuideRender();
   scheduleCursorScroll();
   scheduleSave();
 }
