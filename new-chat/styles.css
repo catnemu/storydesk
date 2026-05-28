@@ -771,19 +771,19 @@ textarea {
 
 .writing-guide .page-flow-mark::after {
   position: absolute;
-  top: 1.34em;
-  right: 0;
-  width: min(70vw, 620px);
+  top: 0.92em;
+  left: max(-70vw, -620px);
+  width: min(92vw, 760px);
   height: 0;
   border-top: 1px solid var(--page-guide);
   color: var(--page-guide);
-  content: "PAGE " attr(data-page);
+  content: "";
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
   font-size: 0.68rem;
   font-weight: 650;
   line-height: 1;
   text-align: right;
-  opacity: 0.86;
+  opacity: 0.58;
 }
 
 .empty-line-sentinel {
@@ -823,7 +823,7 @@ textarea {
   padding: 0 0 0 10px;
   color: var(--page-guide);
   background: var(--panel-raised);
-  content: "PAGE " attr(data-page);
+  content: "";
   letter-spacing: 0;
 }
 
