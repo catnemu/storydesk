@@ -527,9 +527,13 @@ function renderView() {
   if (showProjects || showIndex) document.body.classList.remove("focus-mode");
   document.body.classList.toggle("project-list-mode", showProjects);
   document.body.classList.toggle("chapter-list-mode", showIndex);
+  document.body.classList.toggle("editor-mode", !showProjects && !showIndex);
   elements.projectView.hidden = !showProjects;
   elements.indexView.hidden = !showIndex;
   elements.editorView.hidden = showProjects || showIndex;
+  elements.projectView.style.display = showProjects ? "" : "none";
+  elements.indexView.style.display = showIndex ? "" : "none";
+  elements.editorView.style.display = showProjects || showIndex ? "none" : "";
   elements.projectListButton.hidden = showProjects;
   elements.indexButton.hidden = showProjects || showIndex;
   elements.projectListButton.textContent = showProjects ? "✎" : "□";
