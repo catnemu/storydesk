@@ -565,8 +565,8 @@ function renderWritingGuide() {
   elements.pageLinesHint.textContent = `${pageLines}行ごとに改ページを表示`;
   elements.writingGuide.style.setProperty("--word-line-width", `${lineChars}em`);
   elements.pageGuide.style.setProperty("--word-page-height", `${pageLines * metrics.lineHeight}px`);
-  elements.writingGuide.innerHTML = buildWritingGuide(chapter.body, lineChars);
-  elements.pageGuide.innerHTML = buildPageGuide(chapter.body, lineChars, pageLines, metrics);
+  elements.writingGuide.innerHTML = buildWritingGuide(chapter.body, lineChars, pageLines);
+  elements.pageGuide.innerHTML = "";
 }
 
 function scheduleGuideRender() {
@@ -577,22 +577,34 @@ function scheduleGuideRender() {
   }, 90);
 }
 
-function buildWritingGuide(text, lineChars) {
+function buildWritingGuide(text, lineChars, pageLines) {
   const safeLineChars = normalizeLineChars(lineChars);
+  const safePageLines = normalizePageLines(pageLines);
+  let visualLineCount = 0;
   if (!text) {
     return '<span class="guide-placeholder">本文を書くと、Word上の改行位置と改ページ位置の目安が表示されます。</span>';
   }
 
   return text.split("\n").map((line) => {
     const chars = Array.from(line);
-    if (!chars.length) return '<span class="empty-line-sentinel" aria-hidden="true"></span>';
+    if (!chars.length) {
+      visualLineCount += 1;
+      const pageMark = visualLineCount % safePageLines === 0
+        ? `<span class="page-flow-mark" data-page="${Math.floor(visualLineCount / safePageLines) + 1}" aria-hidden="true"></span>`
+        : "";
+      return `<span class="empty-line-sentinel" aria-hidden="true"></span>${pageMark}`;
+    }
 
     return chars.map((char, index) => {
       const escapedChar = escapeHtml(char);
       const isWordLineEnd = (index + 1) % safeLineChars === 0 && index < chars.length - 1;
-      return isWordLineEnd
-        ? `${escapedChar}<span class="wrap-mark" aria-hidden="true"></span>`
-        : escapedChar;
+      const isVisualLineEnd = (index + 1) % safeLineChars === 0 || index === chars.length - 1;
+      if (isVisualLineEnd) visualLineCount += 1;
+      const wrapMark = isWordLineEnd ? '<span class="wrap-mark" aria-hidden="true"></span>' : "";
+      const pageMark = isVisualLineEnd && visualLineCount % safePageLines === 0
+        ? `<span class="page-flow-mark" data-page="${Math.floor(visualLineCount / safePageLines) + 1}" aria-hidden="true"></span>`
+        : "";
+      return `${escapedChar}${wrapMark}${pageMark}`;
     }).join("");
   }).join("\n");
 }
@@ -607,32 +619,11 @@ function editorMetrics() {
   };
 }
 
-function buildPageGuide(text, lineChars, pageLines, metrics) {
-  const safeLineChars = normalizeLineChars(lineChars);
-  const safePageLines = normalizePageLines(pageLines);
-  if (!text) return "";
-
-  let visualLineCount = 0;
-  text.split("\n").forEach((line) => {
-    visualLineCount += Math.max(1, Math.ceil(Array.from(line).length / safeLineChars));
-  });
-
-  const marks = [];
-  for (let lineNumber = safePageLines; lineNumber < visualLineCount; lineNumber += safePageLines) {
-    const top = metrics.paddingTop + lineNumber * metrics.lineHeight - 1;
-    const pageNumber = Math.floor(lineNumber / safePageLines) + 1;
-    marks.push(`<span class="page-mark" data-page="${pageNumber}" style="top:${top}px"></span>`);
-  }
-
-  const height = metrics.paddingTop + visualLineCount * metrics.lineHeight + metrics.paddingBottom;
-  return `<span class="page-guide-spacer" style="height:${height}px"></span>${marks.join("")}`;
-}
-
 function syncGuideScroll() {
   elements.writingGuide.scrollTop = elements.chapterBody.scrollTop;
   elements.writingGuide.scrollLeft = elements.chapterBody.scrollLeft;
-  elements.pageGuide.scrollTop = elements.chapterBody.scrollTop;
-  elements.pageGuide.scrollLeft = elements.chapterBody.scrollLeft;
+  elements.pageGuide.scrollTop = 0;
+  elements.pageGuide.scrollLeft = 0;
 }
 
 function cursorVisualLine(text, cursor, lineChars) {

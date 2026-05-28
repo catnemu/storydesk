@@ -759,6 +759,33 @@ textarea {
   pointer-events: none;
 }
 
+.writing-guide .page-flow-mark {
+  position: relative;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  vertical-align: baseline;
+}
+
+.writing-guide .page-flow-mark::after {
+  position: absolute;
+  top: 1.34em;
+  right: 0;
+  width: min(70vw, 620px);
+  height: 0;
+  border-top: 1px solid var(--page-guide);
+  color: var(--page-guide);
+  content: "PAGE " attr(data-page);
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1;
+  text-align: right;
+  opacity: 0.86;
+}
+
 .empty-line-sentinel {
   display: inline-block;
   width: 0;
