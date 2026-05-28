@@ -1,0 +1,34 @@
+{
+  "name": "Story Desk",
+  "short_name": "Story Desk",
+  "description": "小説の章、本文、設定メモをまとめて書けるPWAアプリです。",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#2f6f73",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "writing"],
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#2f6f73" id="themeColorMeta" />
+    <meta name="description" content="小説の章、本文、設定メモをまとめて書けるPWAアプリです。" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Story Desk" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Story Desk</title>
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css?v=39" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="作品ナビゲーション">
+        <div class="brand">
+          <div>
+            <p class="eyebrow">Novel Workspace</p>
+            <h1>Story Desk</h1>
+          </div>
+          <button class="icon-button" id="newProjectButton" type="button" title="新規作品">+</button>
+        </div>
+
+        <label class="field-label" for="projectTitle">作品名</label>
+        <input id="projectTitle" class="title-input" type="text" maxlength="80" />
+
+        <div class="metric-grid" aria-label="執筆状況">
+          <div>
+            <span id="totalChars">0</span>
+            <small>文字</small>
+          </div>
+          <div>
+            <span id="chapterCount">0</span>
+            <small>話</small>
+          </div>
+        </div>
+
+        <div class="line-setting">
+          <label class="field-label" for="lineCharsInput">Wordの1行文字数</label>
+          <div class="number-stepper">
+            <input id="lineCharsInput" type="text" inputmode="numeric" pattern="[0-9]*" />
+            <span>文字</span>
+          </div>
+        </div>
+
+        <div class="line-setting">
+          <label class="field-label" for="pageLinesInput">Wordの1ページ行数</label>
+          <div class="number-stepper">
+            <input id="pageLinesInput" type="text" inputmode="numeric" pattern="[0-9]*" />
+            <span>行</span>
+          </div>
+          <p class="setting-hint" id="pageLinesHint">30行ごとに改ページを表示</p>
+        </div>
+
+        <div class="panel-heading">
+          <h2>話</h2>
+          <button class="small-button" id="addChapterButton" type="button">追加</button>
+        </div>
+        <nav id="chapterList" class="chapter-list" aria-label="話リスト"></nav>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Draft</p>
+            <input id="chapterTitle" class="chapter-title" type="text" maxlength="80" />
+          </div>
+          <label class="status-control" for="chapterStatus">
+            <span>ステータス</span>
+            <select id="chapterStatus">
+              <option value="draft">下書き</option>
+              <option value="clean">清書</option>
+              <option value="done">完成</option>
+            </select>
+          </label>
+          <div class="toolbar" aria-label="執筆ツール">
+            <button class="tool-button theme-button" id="themeButton" type="button" title="ダークモードに切り替え" aria-label="ダークモードに切り替え">☾</button>
+            <button class="tool-button" id="projectListButton" type="button" title="作品一覧" aria-label="作品一覧">□</button>
+            <button class="tool-button" id="indexButton" type="button" title="目次" aria-label="目次">☷</button>
+            <button class="tool-button" id="focusButton" type="button" title="集中" aria-label="集中">⛶</button>
+            <details class="more-menu">
+              <summary class="tool-button" aria-label="その他">…</summary>
+              <div class="more-menu-panel">
+                <button class="menu-button" id="exportButton" type="button">TXT書き出し</button>
+                <button class="menu-button" id="backupButton" type="button">JSONバックアップ</button>
+                <button class="menu-button" id="restoreButton" type="button">JSON復元</button>
+              </div>
+            </details>
+            <input id="restoreFileInput" class="visually-hidden" type="file" accept="application/json,.json" />
+          </div>
+        </header>
+
+        <section class="project-view pencake-page" id="projectView" hidden>
+          <div class="pencake-chrome">
+            <button class="pencake-icon" id="projectCreateButton" type="button" aria-label="新規作品">+</button>
+            <details class="pencake-menu">
+              <summary class="pencake-icon" aria-label="メニュー">⋮</summary>
+              <div class="pencake-menu-panel">
+                <button class="menu-button" id="projectMenuThemeButton" type="button">ダーク</button>
+                <button class="menu-button" id="projectMenuBackupButton" type="button">JSONバックアップ</button>
+                <button class="menu-button" id="projectMenuRestoreButton" type="button">JSON復元</button>
+              </div>
+            </details>
+          </div>
+          <div class="pencake-list-title">
+            <span id="projectTotalCount">0</span>
+          </div>
+          <div id="projectList" class="project-list"></div>
+        </section>
+
+        <section class="index-view pencake-page" id="indexView" hidden>
+          <div class="pencake-chrome">
+            <button class="pencake-icon" id="backToProjectsButton" type="button" aria-label="作品一覧へ">‹</button>
+            <details class="pencake-menu">
+              <summary class="pencake-icon" aria-label="メニュー">⋮</summary>
+              <div class="pencake-menu-panel">
+                <button class="menu-button" id="chapterMenuAddButton" type="button">話を追加</button>
+                <button class="menu-button" id="chapterMenuExportButton" type="button">TXT書き出し</button>
+              </div>
+            </details>
+          </div>
+          <div class="pencake-work-heading">
+            <input id="projectHeroTitle" class="pencake-work-title" type="text" maxlength="80" aria-label="作品タイトル" />
+            <input id="projectSubtitleInput" class="pencake-work-subtitle" type="text" maxlength="80" placeholder="カテゴリ / カップリング" aria-label="小見出し" />
+          </div>
+          <div class="index-settings" aria-label="Word換算設定">
+            <label class="compact-setting" for="indexLineCharsInput">
+              <span>1行</span>
+              <input id="indexLineCharsInput" type="text" inputmode="numeric" pattern="[0-9]*" />
+              <small>字</small>
+            </label>
+            <label class="compact-setting" for="indexPageLinesInput">
+              <span>1頁</span>
+              <input id="indexPageLinesInput" type="text" inputmode="numeric" pattern="[0-9]*" />
+              <small>行</small>
+            </label>
+            <div class="index-total">
+              <span id="indexTotalChars">0</span>
+              <small>字</small>
+            </div>
+          </div>
+          <div class="index-table-wrap">
+            <table class="index-table">
+              <thead>
+                <tr>
+                  <th>話</th>
+                  <th>タイトル</th>
+                  <th>文字数</th>
+                  <th>最終更新</th>
+                  <th>ステータス</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="chapterIndexList"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="editor-layout" id="editorView">
+          <article class="editor-panel">
+            <button class="editor-back-button" id="editorBackButton" type="button">← 話一覧</button>
+            <div class="editor-meta">
+              <input id="editorChapterHeading" class="editor-chapter-heading" type="text" maxlength="80" aria-label="話タイトル" />
+              <span id="editorUpdatedAt" class="editor-updated-at"></span>
+            </div>
+            <div class="writing-surface">
+              <pre id="writingGuide" class="writing-guide" aria-hidden="true"></pre>
+              <pre id="pageGuide" class="page-guide" aria-hidden="true"></pre>
+              <textarea id="chapterBody" spellcheck="true" aria-label="本文エディタ"></textarea>
+            </div>
+            <div class="shortcut-bar" aria-label="本文ショートカット">
+              <button class="shortcut-button is-icon" type="button" data-action="undo" title="元に戻す" aria-label="元に戻す">↶</button>
+              <button class="shortcut-button is-icon" type="button" data-action="redo" title="やり直す" aria-label="やり直す">↷</button>
+              <button class="shortcut-button" type="button" data-insert-pair="「|」">「」</button>
+              <button class="shortcut-button" type="button" data-insert-pair="『|』">『』</button>
+              <button class="shortcut-button" type="button" data-insert-pair="（|）">（）</button>
+              <button class="shortcut-button" type="button" data-insert="…">…</button>
+              <button class="shortcut-button is-icon" type="button" data-action="cursor-left" title="カーソルを左へ" aria-label="カーソルを左へ">◀</button>
+              <button class="shortcut-button is-icon" type="button" data-action="cursor-right" title="カーソルを右へ" aria-label="カーソルを右へ">▶</button>
+              <button class="shortcut-button is-icon is-copy" type="button" data-action="copy-all" title="全文コピー" aria-label="全文コピー">⧉</button>
+              <button class="shortcut-button" id="backToChaptersButton" type="button">話一覧</button>
+              <button class="shortcut-button focus-exit-button" id="focusExitButton" type="button">集中解除</button>
+            </div>
+            <footer class="editor-footer">
+              <span id="saveState">保存済み</span>
+              <span id="chapterStats">0文字 / 0段落</span>
+            </footer>
+          </article>
+
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js?v=39"></script>
+  </body>
+</html>

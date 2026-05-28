@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Story Desk">
+  <rect width="512" height="512" rx="108" fill="#2f6f73"/>
+  <path d="M142 118h174c34 0 62 28 62 62v214H190c-27 0-48-21-48-48V118Z" fill="#fbfaf7"/>
+  <path d="M190 118v276" fill="none" stroke="#d9d5cc" stroke-width="18"/>
+  <path d="M230 184h86M230 238h102M230 292h74" fill="none" stroke="#a94e5c" stroke-width="18" stroke-linecap="round"/>
+  <path d="M132 394h246" fill="none" stroke="#b9822b" stroke-width="22" stroke-linecap="round"/>
+</svg>
