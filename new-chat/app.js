@@ -105,6 +105,9 @@ const elements = {
 let appState = loadAppState();
 let saveTimer = null;
 let guideRenderTimer = null;
+let cursorScrollFrame = null;
+let cursorScrollTimer = null;
+let isComposingText = false;
 let activeTheme = loadTheme();
 let storyDbPromise = null;
 let currentView = "projects";
@@ -350,7 +353,7 @@ function scheduleSave() {
   window.clearTimeout(saveTimer);
   saveTimer = window.setTimeout(() => {
     saveStateNow();
-  }, 240);
+  }, 1000);
 }
 
 async function saveStateNow(statusText = "保存済み（端末内）") {
@@ -572,10 +575,11 @@ function renderWritingGuide() {
 function scheduleGuideRender() {
   window.clearTimeout(guideRenderTimer);
   guideRenderTimer = window.setTimeout(() => {
+    if (isComposingText) return;
     renderWritingGuide();
     syncGuideScroll();
     scheduleCursorScroll();
-  }, 90);
+  }, 220);
 }
 
 function buildWritingGuide(text, lineChars, pageLines) {
@@ -616,8 +620,17 @@ function editorMetrics() {
   return {
     lineHeight: Number.parseFloat(computed.lineHeight) || fontSize * 1.8,
     paddingTop: Number.parseFloat(computed.paddingTop) || 0,
-    paddingBottom: Number.parseFloat(computed.paddingBottom) || 0
+    paddingBottom: Number.parseFloat(computed.paddingBottom) || 0,
+    paddingLeft: Number.parseFloat(computed.paddingLeft) || 0,
+    paddingRight: Number.parseFloat(computed.paddingRight) || 0,
+    fontSize
   };
+}
+
+function visibleTextareaColumns(metrics = editorMetrics()) {
+  const body = elements.chapterBody;
+  const availableWidth = Math.max(1, body.clientWidth - metrics.paddingLeft - metrics.paddingRight);
+  return Math.max(1, Math.floor(availableWidth / metrics.fontSize));
 }
 
 function syncGuideScroll() {
@@ -628,7 +641,7 @@ function syncGuideScroll() {
 }
 
 function cursorVisualLine(text, cursor, lineChars) {
-  const safeLineChars = normalizeLineChars(lineChars);
+  const safeLineChars = visibleTextareaColumns();
   const beforeCursor = text.slice(0, cursor);
   const lines = beforeCursor.split("\n");
   let visualLine = 0;
@@ -670,9 +683,13 @@ function keepCursorVisible() {
 }
 
 function scheduleCursorScroll() {
-  window.requestAnimationFrame(keepCursorVisible);
-  window.requestAnimationFrame(() => window.requestAnimationFrame(keepCursorVisible));
-  window.setTimeout(keepCursorVisible, 140);
+  if (cursorScrollFrame) window.cancelAnimationFrame(cursorScrollFrame);
+  window.clearTimeout(cursorScrollTimer);
+  cursorScrollFrame = window.requestAnimationFrame(() => {
+    cursorScrollFrame = null;
+    keepCursorVisible();
+  });
+  cursorScrollTimer = window.setTimeout(keepCursorVisible, 120);
 }
 
 function escapeHtml(value) {
@@ -1017,11 +1034,19 @@ elements.editorChapterHeading.addEventListener("input", (event) => updateActiveC
 elements.chapterStatus.addEventListener("change", (event) => updateActiveChapter("status", event.target.value));
 elements.chapterBody.addEventListener("input", (event) => updateActiveChapter("body", event.target.value));
 elements.chapterBody.addEventListener("scroll", syncGuideScroll);
+elements.chapterBody.addEventListener("keydown", () => window.setTimeout(scheduleCursorScroll, 0));
 elements.chapterBody.addEventListener("keyup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("click", scheduleCursorScroll);
 elements.chapterBody.addEventListener("pointerup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("select", scheduleCursorScroll);
-elements.chapterBody.addEventListener("compositionend", scheduleCursorScroll);
+elements.chapterBody.addEventListener("compositionstart", () => {
+  isComposingText = true;
+});
+elements.chapterBody.addEventListener("compositionend", () => {
+  isComposingText = false;
+  scheduleGuideRender();
+  scheduleCursorScroll();
+});
 elements.chapterBody.addEventListener("focus", () => {
   setShortcutBarActive(true);
   scheduleCursorScroll();
@@ -1039,6 +1064,10 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener("scroll", updateShortcutBarPosition);
   window.visualViewport.addEventListener("scroll", scheduleCursorScroll);
 }
+
+document.addEventListener("selectionchange", () => {
+  if (document.activeElement === elements.chapterBody) scheduleCursorScroll();
+});
 
 elements.addChapterButton.addEventListener("click", () => {
   const project = currentProject();

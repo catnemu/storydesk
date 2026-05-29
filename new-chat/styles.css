@@ -697,7 +697,7 @@ textarea {
   z-index: 2;
   border: 0;
   border-radius: 8px 8px 0 0;
-  color: transparent;
+  color: var(--ink);
   caret-color: var(--cursor-blue);
   background: transparent;
   resize: none;
@@ -720,7 +720,7 @@ textarea {
 
 .writing-guide {
   z-index: 1;
-  color: var(--ink);
+  color: transparent;
 }
 
 .page-guide {
@@ -890,7 +890,7 @@ body.editor-keyboard-active .shortcut-bar {
   bottom: var(--shortcut-bar-bottom);
   left: 0;
   border-top: 1px solid rgba(47, 111, 115, 0.18);
-  box-shadow: var(--shortcut-shadow);
+  box-shadow: none;
 }
 
 .editor-footer {
@@ -1062,6 +1062,18 @@ body.focus-mode .editor-back-button {
 }
 
 @media (max-width: 620px) {
+  button,
+  .icon-button,
+  .small-button,
+  .tool-button,
+  .tab {
+    transition: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
   body {
     background-size: 28px 28px;
   }
@@ -1561,14 +1573,14 @@ body {
 }
 
 #chapterBody {
-  color: transparent;
+  color: rgba(238, 238, 234, 0.76);
 }
 
 .writing-guide {
-  color: rgba(238, 238, 234, 0.72);
+  color: transparent;
 }
 
-:root[data-theme="light"] .writing-guide {
+:root[data-theme="light"] #chapterBody {
   color: rgba(32, 33, 36, 0.74);
 }
 
