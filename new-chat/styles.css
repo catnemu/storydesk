@@ -906,16 +906,12 @@ body.editor-keyboard-active .shortcut-bar {
   right: 0;
   bottom: var(--shortcut-bar-bottom);
   left: 0;
-  border-top: 1px solid rgba(47, 111, 115, 0.18);
+  border-top: 1px solid rgba(128, 128, 128, 0.1);
   box-shadow: none;
 }
 
 .editor-footer {
-  min-height: 48px;
-  padding: 0 18px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.84rem;
+  display: none !important;
 }
 
 .notes-panel {
@@ -1547,7 +1543,7 @@ body {
 }
 
 .editor-panel {
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   border: 0;
   border-radius: 0;
   background: var(--paper);
@@ -1561,10 +1557,10 @@ body {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr) 56px;
   align-items: center;
-  min-height: 44px;
-  padding: max(8px, env(safe-area-inset-top)) 18px 6px;
-  background: rgba(23, 24, 24, 0.72);
-  backdrop-filter: blur(10px);
+  min-height: 38px;
+  padding: max(5px, env(safe-area-inset-top)) 16px 5px;
+  background: rgba(23, 24, 24, 0.42);
+  backdrop-filter: none;
 }
 
 .editor-nav-button {
@@ -1596,7 +1592,7 @@ body {
 #chapterBody,
 .writing-guide,
 .page-guide {
-  padding: 26px max(30px, calc((100vw - 780px) / 2)) 78px;
+  padding: 18px max(30px, calc((100vw - 780px) / 2)) 58px;
   font-size: 1.02rem;
   line-height: 1.78;
 }
@@ -1618,17 +1614,14 @@ body {
 }
 
 .editor-footer {
-  min-height: 30px;
-  padding: 0 24px;
-  border-top: 0;
-  opacity: 0.45;
+  display: none !important;
 }
 
 .shortcut-bar {
   justify-content: center;
   gap: 5px;
   border-top-color: rgba(128, 128, 128, 0.1);
-  background: rgba(23, 24, 24, 0.78);
+  background: rgba(23, 24, 24, 0.46);
 }
 
 :root[data-theme="light"] .shortcut-bar {
@@ -1654,6 +1647,18 @@ body {
 .shortcut-button.is-copy {
   color: var(--muted);
   background: transparent;
+}
+
+.shortcut-status {
+  flex: 0 0 auto;
+  align-self: center;
+  color: rgba(238, 238, 234, 0.44);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+body:not(.shortcut-menu-open) .shortcut-bar .shortcut-status {
+  display: none;
 }
 
 .focus-exit-button,
@@ -1701,7 +1706,7 @@ body.editor-mode .writing-surface,
 body.editor-mode #chapterBody,
 body.editor-mode .writing-guide,
 body.editor-mode .page-guide {
-  min-height: calc(100dvh - 88px);
+  min-height: calc(100dvh - 74px);
 }
 
 @media (max-width: 620px) {
@@ -1760,9 +1765,9 @@ body.editor-mode .page-guide {
 
   .editor-topbar {
     grid-template-columns: 68px minmax(0, 1fr) 52px;
-    min-height: 40px;
-    padding-right: 14px;
-    padding-left: 14px;
+    min-height: 36px;
+    padding-right: 12px;
+    padding-left: 12px;
   }
 
   .editor-chapter-heading {
@@ -1772,13 +1777,13 @@ body.editor-mode .page-guide {
   #chapterBody,
   .writing-guide,
   .page-guide {
-    padding: 20px 30px 70px;
+    padding: 16px 30px 54px;
     font-size: 1rem;
     line-height: 1.72;
   }
 
   .shortcut-bar {
-    min-height: 38px;
+    min-height: 34px;
     padding: 3px 8px max(3px, env(safe-area-inset-bottom));
   }
 

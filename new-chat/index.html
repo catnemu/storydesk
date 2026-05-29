@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=51" />
+    <link rel="stylesheet" href="./styles.css?v=52" />
   </head>
   <body>
     <div class="app-shell">
@@ -163,7 +163,7 @@
         <section class="editor-layout" id="editorView">
           <article class="editor-panel">
             <header class="editor-topbar">
-              <button class="editor-nav-button" id="editorBackButton" type="button">話一覧</button>
+              <button class="editor-nav-button" id="editorBackButton" type="button">キャンセル</button>
               <input id="editorChapterHeading" class="editor-chapter-heading" type="text" maxlength="80" aria-label="話タイトル" />
               <button class="editor-nav-button" id="editorDoneButton" type="button">完了</button>
               <span id="editorUpdatedAt" class="editor-updated-at"></span>
@@ -184,19 +184,17 @@
               <button class="shortcut-button is-icon" type="button" data-action="cursor-left" title="カーソルを左へ" aria-label="カーソルを左へ">◀</button>
               <button class="shortcut-button is-icon" type="button" data-action="cursor-right" title="カーソルを右へ" aria-label="カーソルを右へ">▶</button>
               <button class="shortcut-button is-icon is-copy" type="button" data-action="copy-all" title="全文コピー" aria-label="全文コピー">⧉</button>
+              <span class="shortcut-status" id="saveState">保存済み</span>
+              <span class="shortcut-status" id="chapterStats">0文字 / 0段落</span>
               <button class="shortcut-button" id="backToChaptersButton" type="button">話一覧</button>
               <button class="shortcut-button focus-exit-button" id="focusExitButton" type="button">集中解除</button>
             </div>
-            <footer class="editor-footer">
-              <span id="saveState">保存済み</span>
-              <span id="chapterStats">0文字 / 0段落</span>
-            </footer>
           </article>
 
         </section>
       </main>
     </div>
 
-    <script src="./app.js?v=51"></script>
+    <script src="./app.js?v=52"></script>
   </body>
 </html>
