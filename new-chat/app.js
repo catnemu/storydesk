@@ -572,11 +572,7 @@ function renderWritingGuide() {
 function scheduleGuideRender() {
   window.clearTimeout(guideRenderTimer);
   guideRenderTimer = window.setTimeout(() => {
-    const scrollTop = elements.chapterBody.scrollTop;
-    const scrollLeft = elements.chapterBody.scrollLeft;
     renderWritingGuide();
-    elements.chapterBody.scrollTop = scrollTop;
-    elements.chapterBody.scrollLeft = scrollLeft;
     syncGuideScroll();
     scheduleCursorScroll();
   }, 90);
@@ -639,8 +635,11 @@ function cursorVisualLine(text, cursor, lineChars) {
 
   lines.forEach((line, index) => {
     const charCount = Array.from(line).length;
-    const wrappedLines = Math.max(1, Math.ceil(charCount / safeLineChars));
-    visualLine += index === lines.length - 1 ? Math.max(0, wrappedLines - 1) : wrappedLines;
+    if (index < lines.length - 1) {
+      visualLine += Math.max(1, Math.ceil(charCount / safeLineChars));
+      return;
+    }
+    visualLine += Math.floor(charCount / safeLineChars);
   });
 
   return visualLine;
@@ -662,7 +661,7 @@ function keepCursorVisible() {
   const visibleBottom = body.scrollTop + body.clientHeight - paddingBottom - extraBottomRoom;
 
   if (cursorBottom > visibleBottom) {
-    body.scrollTop += cursorBottom - visibleBottom + lineHeight * 0.5;
+    body.scrollTop = Math.max(0, cursorBottom - body.clientHeight + paddingBottom + extraBottomRoom + lineHeight * 0.5);
   } else if (cursorTop < visibleTop) {
     body.scrollTop = Math.max(0, cursorTop - paddingTop - lineHeight);
   }
@@ -1018,7 +1017,6 @@ elements.editorChapterHeading.addEventListener("input", (event) => updateActiveC
 elements.chapterStatus.addEventListener("change", (event) => updateActiveChapter("status", event.target.value));
 elements.chapterBody.addEventListener("input", (event) => updateActiveChapter("body", event.target.value));
 elements.chapterBody.addEventListener("scroll", syncGuideScroll);
-elements.chapterBody.addEventListener("keydown", scheduleCursorScroll);
 elements.chapterBody.addEventListener("keyup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("click", scheduleCursorScroll);
 elements.chapterBody.addEventListener("pointerup", scheduleCursorScroll);
