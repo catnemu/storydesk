@@ -841,6 +841,10 @@ body.focus-mode .writing-guide .page-flow-mark::after {
   color: var(--muted);
 }
 
+.status-store {
+  display: none !important;
+}
+
 .shortcut-bar {
   position: sticky;
   bottom: 0;

@@ -100,10 +100,7 @@ const elements = {
   editorView: document.querySelector("#editorView"),
   indexView: document.querySelector("#indexView"),
   chapterIndexList: document.querySelector("#chapterIndexList"),
-  indexTotalChars: document.querySelector("#indexTotalChars"),
-  shortcutButtons: document.querySelectorAll(".shortcut-button")
-  ,
-  shortcutToggleButton: document.querySelector("#shortcutToggleButton")
+  indexTotalChars: document.querySelector("#indexTotalChars")
 };
 
 let appState = loadAppState();
@@ -475,7 +472,6 @@ function openChapterForWriting(chapterId) {
   document.body.classList.remove("shortcut-menu-open");
   document.body.classList.add("editor-writing-active");
   updateEditorChrome();
-  elements.shortcutToggleButton.textContent = "⌃";
   moveEditorToEnd();
   scheduleSave();
 }
@@ -726,9 +722,7 @@ function keepCursorVisible() {
   const project = currentProject();
   const { lineHeight, paddingTop, paddingBottom } = editorMetrics();
   updateShortcutBarPosition();
-  const shortcutHeight = document.body.classList.contains("editor-keyboard-active")
-    ? Math.max(44, document.querySelector(".shortcut-bar")?.offsetHeight || 44)
-    : Math.max(24, document.querySelector(".shortcut-bar")?.offsetHeight || 24);
+  const shortcutHeight = 0;
   const extraBottomRoom = shortcutHeight + lineHeight * 2.4 + 18;
   const caretAtEnd = body.selectionEnd >= body.value.length;
   if (caretAtEnd) {
@@ -1185,9 +1179,11 @@ elements.backToProjectsButton.addEventListener("click", () => {
   render();
 });
 
-elements.backToChaptersButton.addEventListener("click", () => {
-  backToChapterIndex();
-});
+if (elements.backToChaptersButton) {
+  elements.backToChaptersButton.addEventListener("click", () => {
+    backToChapterIndex();
+  });
+}
 
 elements.editorBackButton.addEventListener("click", () => {
   if (document.body.classList.contains("editor-writing-active")) {
@@ -1251,58 +1247,15 @@ elements.projectMenuRestoreButton.addEventListener("click", () => elements.resto
 elements.restoreFileInput.addEventListener("change", (event) => restoreProjectFromFile(event.target.files?.[0]));
 elements.chapterMenuAddButton.addEventListener("click", () => elements.addChapterButton.click());
 
-elements.shortcutButtons.forEach((button) => {
-  button.addEventListener("pointerdown", (event) => event.preventDefault());
-  button.addEventListener("click", async () => {
-    const pair = button.dataset.insertPair;
-    if (pair) {
-      const [open, close] = pair.split("|");
-      wrapBodySelection(open, close);
-      return;
-    }
-    if (button.dataset.insert) {
-      insertIntoBody(button.dataset.insert);
-      return;
-    }
-    if (button.dataset.action === "undo") {
-      runEditorCommand("undo");
-      return;
-    }
-    if (button.dataset.action === "redo") {
-      runEditorCommand("redo");
-      return;
-    }
-    if (button.dataset.action === "cursor-left") {
-      moveBodyCursor(-1);
-      return;
-    }
-    if (button.dataset.action === "cursor-right") {
-      moveBodyCursor(1);
-      return;
-    }
-    if (button.dataset.action === "copy-all") {
-      await copyAllBody();
-      elements.chapterBody.focus();
-    }
-  });
-});
-
-elements.shortcutToggleButton.addEventListener("pointerdown", (event) => event.preventDefault());
-elements.shortcutToggleButton.addEventListener("click", () => {
-  const isOpen = document.body.classList.toggle("shortcut-menu-open");
-  elements.shortcutToggleButton.textContent = isOpen ? "⌄" : "⌃";
-  elements.shortcutToggleButton.setAttribute("aria-label", isOpen ? "ショートカットを閉じる" : "ショートカットを開く");
-  elements.chapterBody.focus();
-  scheduleCursorScroll();
-});
-
 elements.focusButton.addEventListener("click", () => {
   setFocusMode(!document.body.classList.contains("focus-mode"));
 });
 
-elements.focusExitButton.addEventListener("click", () => {
-  setFocusMode(false);
-});
+if (elements.focusExitButton) {
+  elements.focusExitButton.addEventListener("click", () => {
+    setFocusMode(false);
+  });
+}
 
 function setFocusMode(isActive) {
   document.body.classList.toggle("focus-mode", isActive);

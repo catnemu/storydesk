@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=57" />
+    <link rel="stylesheet" href="./styles.css?v=59" />
   </head>
   <body>
     <div class="app-shell">
@@ -173,21 +173,9 @@
               <pre id="pageGuide" class="page-guide" aria-hidden="true"></pre>
               <textarea id="chapterBody" spellcheck="true" aria-label="本文エディタ"></textarea>
             </div>
-            <div class="shortcut-bar" aria-label="本文ショートカット">
-              <button class="shortcut-toggle" id="shortcutToggleButton" type="button" aria-label="ショートカットを開く">⌃</button>
-              <button class="shortcut-button is-icon" type="button" data-action="undo" title="元に戻す" aria-label="元に戻す">↶</button>
-              <button class="shortcut-button is-icon" type="button" data-action="redo" title="やり直す" aria-label="やり直す">↷</button>
-              <button class="shortcut-button" type="button" data-insert-pair="「|」">「」</button>
-              <button class="shortcut-button" type="button" data-insert-pair="『|』">『』</button>
-              <button class="shortcut-button" type="button" data-insert-pair="（|）">（）</button>
-              <button class="shortcut-button" type="button" data-insert="…">…</button>
-              <button class="shortcut-button is-icon" type="button" data-action="cursor-left" title="カーソルを左へ" aria-label="カーソルを左へ">◀</button>
-              <button class="shortcut-button is-icon" type="button" data-action="cursor-right" title="カーソルを右へ" aria-label="カーソルを右へ">▶</button>
-              <button class="shortcut-button is-icon is-copy" type="button" data-action="copy-all" title="全文コピー" aria-label="全文コピー">⧉</button>
+            <div class="status-store" aria-hidden="true">
               <span class="shortcut-status" id="saveState">保存済み</span>
               <span class="shortcut-status" id="chapterStats">0文字 / 0段落</span>
-              <button class="shortcut-button" id="backToChaptersButton" type="button">話一覧</button>
-              <button class="shortcut-button focus-exit-button" id="focusExitButton" type="button">集中解除</button>
             </div>
           </article>
 
@@ -195,6 +183,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=57"></script>
+    <script src="./app.js?v=59"></script>
   </body>
 </html>
