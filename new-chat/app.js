@@ -6,6 +6,7 @@ const projectStoreName = "projects";
 const currentProjectKey = "current";
 const appDataVersion = 4;
 const maxChapters = 30;
+const wordGuidesEnabled = false;
 const chapterStatuses = {
   draft: "下書き",
   clean: "清書",
@@ -476,16 +477,17 @@ function openChapterForWriting(chapterId) {
 function moveEditorToEnd() {
   const body = elements.chapterBody;
   const end = body.value.length;
-  window.requestAnimationFrame(() => {
+  const move = () => {
     body.focus();
     body.setSelectionRange(end, end);
     body.scrollTop = body.scrollHeight;
     syncGuideScroll();
-    window.requestAnimationFrame(() => {
-      body.scrollTop = body.scrollHeight;
-      syncGuideScroll();
-    });
-  });
+  };
+  window.requestAnimationFrame(move);
+  window.requestAnimationFrame(() => window.requestAnimationFrame(move));
+  window.setTimeout(move, 80);
+  window.setTimeout(move, 240);
+  window.setTimeout(move, 600);
 }
 
 function backToChapterIndex() {
@@ -558,6 +560,16 @@ function renderStats() {
 }
 
 function renderWritingGuide() {
+  if (!wordGuidesEnabled) {
+    elements.writingGuide.innerHTML = "";
+    elements.pageGuide.innerHTML = "";
+    elements.writingGuide.style.display = "none";
+    elements.pageGuide.style.display = "none";
+    return;
+  }
+
+  elements.writingGuide.style.display = "";
+  elements.pageGuide.style.display = "";
   const project = currentProject();
   const chapter = activeChapter();
   const lineChars = normalizeLineChars(project.lineChars);
@@ -573,6 +585,7 @@ function renderWritingGuide() {
 }
 
 function scheduleGuideRender() {
+  if (!wordGuidesEnabled) return;
   window.clearTimeout(guideRenderTimer);
   guideRenderTimer = window.setTimeout(() => {
     if (isComposingText) return;
@@ -667,6 +680,13 @@ function keepCursorVisible() {
     ? Math.max(44, document.querySelector(".shortcut-bar")?.offsetHeight || 44)
     : Math.max(24, document.querySelector(".shortcut-bar")?.offsetHeight || 24);
   const extraBottomRoom = shortcutHeight + lineHeight * 2.4 + 18;
+  const caretAtEnd = body.selectionEnd >= body.value.length;
+  if (caretAtEnd) {
+    body.scrollTop = body.scrollHeight;
+    syncGuideScroll();
+    return;
+  }
+
   const line = cursorVisualLine(body.value, body.selectionEnd, project.lineChars);
   const cursorTop = paddingTop + line * lineHeight;
   const cursorBottom = cursorTop + lineHeight;
