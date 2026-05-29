@@ -745,7 +745,7 @@ textarea {
   position: absolute;
   left: 50%;
   top: 0.18em;
-  color: var(--guide-mark);
+  color: rgba(238, 238, 234, 0.54);
   content: "";
   width: 0;
   height: 1.08em;
@@ -754,7 +754,7 @@ textarea {
   box-shadow: none;
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
   font-weight: 500;
-  opacity: 0.78;
+  opacity: 0.9;
   line-height: 1;
   pointer-events: none;
 }
@@ -775,7 +775,7 @@ textarea {
   left: max(-70vw, -620px);
   width: min(92vw, 760px);
   height: 0;
-  border-top: 1px solid rgba(238, 238, 234, 0.22);
+  border-top: 1px solid rgba(238, 238, 234, 0.36);
   color: var(--page-guide);
   content: "";
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
@@ -783,15 +783,15 @@ textarea {
   font-weight: 650;
   line-height: 1;
   text-align: right;
-  opacity: 0.42;
+  opacity: 0.68;
 }
 
 body.focus-mode .writing-guide .page-flow-mark::after {
-  opacity: 0.24;
+  opacity: 0.42;
 }
 
 :root[data-theme="light"] .writing-guide .page-flow-mark::after {
-  border-top-color: rgba(32, 33, 36, 0.18);
+  border-top-color: rgba(32, 33, 36, 0.32);
 }
 
 .empty-line-sentinel {
@@ -1631,6 +1631,10 @@ body {
   background: rgba(247, 245, 239, 0.82);
 }
 
+:root[data-theme="light"] .writing-guide .wrap-mark::after {
+  color: rgba(32, 33, 36, 0.42);
+}
+
 :root[data-theme="light"] .shortcut-toggle,
 :root[data-theme="light"] .shortcut-button {
   color: rgba(32, 33, 36, 0.56);
@@ -1647,6 +1651,14 @@ body {
   opacity: 0.72;
 }
 
+.shortcut-toggle {
+  display: none !important;
+}
+
+body:not(.shortcut-menu-open) .shortcut-bar .shortcut-button {
+  display: inline-flex;
+}
+
 .shortcut-button.is-copy {
   color: var(--muted);
   background: transparent;
@@ -1661,7 +1673,7 @@ body {
 }
 
 body:not(.shortcut-menu-open) .shortcut-bar .shortcut-status {
-  display: none;
+  display: inline-flex;
 }
 
 .focus-exit-button,
@@ -1788,6 +1800,15 @@ body.editor-mode .page-guide {
   .shortcut-bar {
     min-height: 34px;
     padding: 3px 8px max(3px, env(safe-area-inset-bottom));
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .shortcut-bar::-webkit-scrollbar {
+    display: none;
   }
 
   .shortcut-toggle,
