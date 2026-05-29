@@ -1901,6 +1901,33 @@ body.editor-writing-active.editor-mode .shortcut-button.is-icon {
   font-size: 0.88rem;
 }
 
+/* v57: remove every app-made keyboard accessory row for a clean writing test. */
+body.editor-mode .shortcut-bar,
+body.editor-writing-active.editor-mode .shortcut-bar,
+body.editor-keyboard-active.editor-mode .shortcut-bar,
+body.shortcut-menu-open .shortcut-bar {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+body.editor-mode #chapterBody,
+body.editor-mode .writing-guide,
+body.editor-mode .page-guide,
+body.editor-writing-active.editor-mode #chapterBody,
+body.editor-writing-active.editor-mode .writing-guide,
+body.editor-writing-active.editor-mode .page-guide,
+body.editor-keyboard-active.editor-writing-active.editor-mode #chapterBody,
+body.editor-keyboard-active.editor-writing-active.editor-mode .writing-guide,
+body.editor-keyboard-active.editor-writing-active.editor-mode .page-guide {
+  padding-bottom: calc(34px + env(safe-area-inset-bottom)) !important;
+}
+
 @media (max-width: 620px) {
   .pencake-page {
     padding-right: 28px;

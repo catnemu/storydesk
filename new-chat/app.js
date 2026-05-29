@@ -525,6 +525,24 @@ function updateEditorChrome() {
   elements.editorBackButton.setAttribute("aria-label", isWriting ? "執筆をやめる" : "話一覧へ戻る");
   elements.editorDoneButton.hidden = !isWriting;
   elements.chapterBody.readOnly = !isWriting;
+  isolateEditorFormControls(isWriting);
+}
+
+function isolateEditorFormControls(isWriting) {
+  document.querySelectorAll("input, select, textarea").forEach((control) => {
+    if (control === elements.chapterBody) return;
+    if (isWriting) {
+      if (!control.dataset.disabledBeforeWriting) {
+        control.dataset.disabledBeforeWriting = control.disabled ? "true" : "false";
+      }
+      control.disabled = true;
+      return;
+    }
+    if (control.dataset.disabledBeforeWriting) {
+      control.disabled = control.dataset.disabledBeforeWriting === "true";
+      delete control.dataset.disabledBeforeWriting;
+    }
+  });
 }
 
 function renderIndex() {
