@@ -474,6 +474,7 @@ function openChapterForWriting(chapterId) {
   render();
   document.body.classList.remove("shortcut-menu-open");
   document.body.classList.add("editor-writing-active");
+  updateEditorChrome();
   elements.shortcutToggleButton.textContent = "⌃";
   moveEditorToEnd();
   scheduleSave();
@@ -497,8 +498,33 @@ function moveEditorToEnd() {
 
 function backToChapterIndex() {
   document.body.classList.remove("editor-writing-active", "shortcut-menu-open");
+  updateEditorChrome();
   currentView = "index";
   render();
+}
+
+function finishWritingMode() {
+  document.body.classList.remove("editor-writing-active", "shortcut-menu-open");
+  elements.chapterBody.blur();
+  updateEditorChrome();
+  syncGuideScroll();
+  saveStateNow();
+}
+
+function startWritingModeAtCurrentPosition() {
+  if (currentView !== "editor" || document.body.classList.contains("editor-writing-active")) return;
+  document.body.classList.add("editor-writing-active");
+  updateEditorChrome();
+  elements.chapterBody.focus();
+  scheduleCursorScroll();
+}
+
+function updateEditorChrome() {
+  const isWriting = document.body.classList.contains("editor-writing-active");
+  elements.editorBackButton.textContent = isWriting ? "キャンセル" : "＜";
+  elements.editorBackButton.setAttribute("aria-label", isWriting ? "執筆をやめる" : "話一覧へ戻る");
+  elements.editorDoneButton.hidden = !isWriting;
+  elements.chapterBody.readOnly = !isWriting;
 }
 
 function renderIndex() {
@@ -553,6 +579,7 @@ function renderView() {
   elements.indexButton.title = showIndex ? "編集へ戻る" : "目次";
   elements.indexButton.setAttribute("aria-label", elements.indexButton.title);
   elements.focusButton.disabled = showProjects || showIndex;
+  updateEditorChrome();
 }
 
 function renderStats() {
@@ -1061,6 +1088,7 @@ elements.chapterBody.addEventListener("scroll", syncGuideScroll);
 elements.chapterBody.addEventListener("keydown", () => window.setTimeout(scheduleCursorScroll, 0));
 elements.chapterBody.addEventListener("keyup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("click", scheduleCursorScroll);
+elements.chapterBody.addEventListener("click", startWritingModeAtCurrentPosition);
 elements.chapterBody.addEventListener("pointerup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("select", scheduleCursorScroll);
 elements.chapterBody.addEventListener("compositionstart", () => {
@@ -1143,13 +1171,14 @@ elements.backToChaptersButton.addEventListener("click", () => {
   backToChapterIndex();
 });
 
-elements.editorBackButton.addEventListener("click", backToChapterIndex);
-elements.editorDoneButton.addEventListener("click", () => {
-  document.body.classList.remove("editor-writing-active", "shortcut-menu-open");
-  elements.shortcutToggleButton.textContent = "⌃";
-  elements.chapterBody.blur();
-  saveStateNow();
+elements.editorBackButton.addEventListener("click", () => {
+  if (document.body.classList.contains("editor-writing-active")) {
+    finishWritingMode();
+    return;
+  }
+  backToChapterIndex();
 });
+elements.editorDoneButton.addEventListener("click", finishWritingMode);
 
 elements.projectListButton.addEventListener("click", () => {
   currentView = "projects";
