@@ -572,8 +572,13 @@ function renderWritingGuide() {
 function scheduleGuideRender() {
   window.clearTimeout(guideRenderTimer);
   guideRenderTimer = window.setTimeout(() => {
+    const scrollTop = elements.chapterBody.scrollTop;
+    const scrollLeft = elements.chapterBody.scrollLeft;
     renderWritingGuide();
+    elements.chapterBody.scrollTop = scrollTop;
+    elements.chapterBody.scrollLeft = scrollLeft;
     syncGuideScroll();
+    scheduleCursorScroll();
   }, 90);
 }
 
@@ -645,20 +650,21 @@ function keepCursorVisible() {
   const body = elements.chapterBody;
   const project = currentProject();
   const { lineHeight, paddingTop, paddingBottom } = editorMetrics();
+  updateShortcutBarPosition();
   const shortcutHeight = document.body.classList.contains("editor-keyboard-active")
-    ? Math.max(48, document.querySelector(".shortcut-bar")?.offsetHeight || 48)
-    : 36;
-  const extraBottomRoom = shortcutHeight + lineHeight * 1.8;
+    ? Math.max(44, document.querySelector(".shortcut-bar")?.offsetHeight || 44)
+    : Math.max(24, document.querySelector(".shortcut-bar")?.offsetHeight || 24);
+  const extraBottomRoom = shortcutHeight + lineHeight * 2.4 + 18;
   const line = cursorVisualLine(body.value, body.selectionEnd, project.lineChars);
   const cursorTop = paddingTop + line * lineHeight;
   const cursorBottom = cursorTop + lineHeight;
-  const visibleTop = body.scrollTop + paddingTop;
+  const visibleTop = body.scrollTop + paddingTop + lineHeight * 0.6;
   const visibleBottom = body.scrollTop + body.clientHeight - paddingBottom - extraBottomRoom;
 
   if (cursorBottom > visibleBottom) {
-    body.scrollTop += cursorBottom - visibleBottom;
+    body.scrollTop += cursorBottom - visibleBottom + lineHeight * 0.5;
   } else if (cursorTop < visibleTop) {
-    body.scrollTop = Math.max(0, cursorTop - paddingTop);
+    body.scrollTop = Math.max(0, cursorTop - paddingTop - lineHeight);
   }
 
   syncGuideScroll();
@@ -666,6 +672,8 @@ function keepCursorVisible() {
 
 function scheduleCursorScroll() {
   window.requestAnimationFrame(keepCursorVisible);
+  window.requestAnimationFrame(() => window.requestAnimationFrame(keepCursorVisible));
+  window.setTimeout(keepCursorVisible, 140);
 }
 
 function escapeHtml(value) {
@@ -1010,10 +1018,16 @@ elements.editorChapterHeading.addEventListener("input", (event) => updateActiveC
 elements.chapterStatus.addEventListener("change", (event) => updateActiveChapter("status", event.target.value));
 elements.chapterBody.addEventListener("input", (event) => updateActiveChapter("body", event.target.value));
 elements.chapterBody.addEventListener("scroll", syncGuideScroll);
+elements.chapterBody.addEventListener("keydown", scheduleCursorScroll);
 elements.chapterBody.addEventListener("keyup", scheduleCursorScroll);
 elements.chapterBody.addEventListener("click", scheduleCursorScroll);
+elements.chapterBody.addEventListener("pointerup", scheduleCursorScroll);
+elements.chapterBody.addEventListener("select", scheduleCursorScroll);
 elements.chapterBody.addEventListener("compositionend", scheduleCursorScroll);
-elements.chapterBody.addEventListener("focus", () => setShortcutBarActive(true));
+elements.chapterBody.addEventListener("focus", () => {
+  setShortcutBarActive(true);
+  scheduleCursorScroll();
+});
 elements.chapterBody.addEventListener("blur", () => {
   window.setTimeout(() => {
     if (document.activeElement !== elements.chapterBody) setShortcutBarActive(false);
@@ -1022,8 +1036,10 @@ elements.chapterBody.addEventListener("blur", () => {
 
 if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", updateShortcutBarPosition);
-  window.visualViewport.addEventListener("resize", renderWritingGuide);
+  window.visualViewport.addEventListener("resize", scheduleGuideRender);
+  window.visualViewport.addEventListener("resize", scheduleCursorScroll);
   window.visualViewport.addEventListener("scroll", updateShortcutBarPosition);
+  window.visualViewport.addEventListener("scroll", scheduleCursorScroll);
 }
 
 elements.addChapterButton.addEventListener("click", () => {

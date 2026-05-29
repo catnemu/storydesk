@@ -771,11 +771,11 @@ textarea {
 
 .writing-guide .page-flow-mark::after {
   position: absolute;
-  top: 0.92em;
+  top: 1.14em;
   left: max(-70vw, -620px);
   width: min(92vw, 760px);
   height: 0;
-  border-top: 1px solid var(--page-guide);
+  border-top: 1px solid rgba(238, 238, 234, 0.22);
   color: var(--page-guide);
   content: "";
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
@@ -783,7 +783,15 @@ textarea {
   font-weight: 650;
   line-height: 1;
   text-align: right;
-  opacity: 0.58;
+  opacity: 0.42;
+}
+
+body.focus-mode .writing-guide .page-flow-mark::after {
+  opacity: 0.24;
+}
+
+:root[data-theme="light"] .writing-guide .page-flow-mark::after {
+  border-top-color: rgba(32, 33, 36, 0.18);
 }
 
 .empty-line-sentinel {
