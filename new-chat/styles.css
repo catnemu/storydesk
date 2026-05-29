@@ -845,26 +845,43 @@ body.focus-mode .writing-guide .page-flow-mark::after {
   z-index: 6;
   display: flex;
   gap: 8px;
-  padding: 8px 10px;
-  border-top: 1px solid var(--line);
-  background: var(--shortcut-bg);
+  align-items: center;
+  padding: 6px 10px;
+  border-top: 1px solid rgba(128, 128, 128, 0.1);
+  background: rgba(23, 24, 24, 0.5);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }
 
+.shortcut-toggle,
 .shortcut-button {
   flex: 0 0 auto;
-  min-width: 46px;
-  min-height: 38px;
-  padding: 0 11px;
-  border: 1px solid var(--shortcut-border);
-  border-radius: 8px;
-  color: var(--accent-strong);
-  background: var(--control);
+  min-width: 38px;
+  min-height: 34px;
+  padding: 0 9px;
+  border: 1px solid rgba(160, 160, 160, 0.14);
+  border-radius: 999px;
+  color: rgba(238, 238, 234, 0.62);
+  background: rgba(28, 29, 29, 0.42);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.95rem;
   white-space: nowrap;
+}
+
+.shortcut-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(238, 238, 234, 0.72);
+}
+
+body:not(.shortcut-menu-open) .shortcut-bar .shortcut-button {
+  display: none;
+}
+
+body.shortcut-menu-open .shortcut-bar {
+  background: rgba(23, 24, 24, 0.72);
 }
 
 .shortcut-button.is-icon {
@@ -874,8 +891,8 @@ body.focus-mode .writing-guide .page-flow-mark::after {
 }
 
 .shortcut-button.is-copy {
-  color: #fff;
-  background: var(--accent);
+  color: rgba(238, 238, 234, 0.76);
+  background: rgba(118, 185, 182, 0.14);
 }
 
 .focus-exit-button {
@@ -1602,6 +1619,13 @@ body {
   background: rgba(247, 245, 239, 0.82);
 }
 
+:root[data-theme="light"] .shortcut-toggle,
+:root[data-theme="light"] .shortcut-button {
+  color: rgba(32, 33, 36, 0.56);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.shortcut-toggle,
 .shortcut-button {
   min-width: 36px;
   min-height: 34px;
@@ -1719,6 +1743,7 @@ body.focus-mode .page-guide {
     padding: 3px 8px max(3px, env(safe-area-inset-bottom));
   }
 
+  .shortcut-toggle,
   .shortcut-button,
   .shortcut-button.is-icon {
     min-width: 32px;

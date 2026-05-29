@@ -6,7 +6,7 @@ const projectStoreName = "projects";
 const currentProjectKey = "current";
 const appDataVersion = 4;
 const maxChapters = 30;
-const wordGuidesEnabled = false;
+const wordGuidesEnabled = true;
 const chapterStatuses = {
   draft: "下書き",
   clean: "清書",
@@ -101,6 +101,8 @@ const elements = {
   chapterIndexList: document.querySelector("#chapterIndexList"),
   indexTotalChars: document.querySelector("#indexTotalChars"),
   shortcutButtons: document.querySelectorAll(".shortcut-button")
+  ,
+  shortcutToggleButton: document.querySelector("#shortcutToggleButton")
 };
 
 let appState = loadAppState();
@@ -1227,6 +1229,15 @@ elements.shortcutButtons.forEach((button) => {
       elements.chapterBody.focus();
     }
   });
+});
+
+elements.shortcutToggleButton.addEventListener("pointerdown", (event) => event.preventDefault());
+elements.shortcutToggleButton.addEventListener("click", () => {
+  const isOpen = document.body.classList.toggle("shortcut-menu-open");
+  elements.shortcutToggleButton.textContent = isOpen ? "⌄" : "⌃";
+  elements.shortcutToggleButton.setAttribute("aria-label", isOpen ? "ショートカットを閉じる" : "ショートカットを開く");
+  elements.chapterBody.focus();
+  scheduleCursorScroll();
 });
 
 elements.focusButton.addEventListener("click", () => {

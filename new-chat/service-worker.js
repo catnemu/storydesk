@@ -1,9 +1,9 @@
-const cacheName = "story-desk-v49";
+const cacheName = "story-desk-v50";
 const assets = [
   "./",
   "./index.html",
-  "./styles.css?v=49",
-  "./app.js?v=49",
+  "./styles.css?v=50",
+  "./app.js?v=50",
   "./manifest.webmanifest",
   "./icon.svg",
   "./icon-192.png",
