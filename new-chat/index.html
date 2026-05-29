@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=50" />
+    <link rel="stylesheet" href="./styles.css?v=51" />
   </head>
   <body>
     <div class="app-shell">
@@ -162,11 +162,12 @@
 
         <section class="editor-layout" id="editorView">
           <article class="editor-panel">
-            <button class="editor-back-button" id="editorBackButton" type="button">← 話一覧</button>
-            <div class="editor-meta">
+            <header class="editor-topbar">
+              <button class="editor-nav-button" id="editorBackButton" type="button">話一覧</button>
               <input id="editorChapterHeading" class="editor-chapter-heading" type="text" maxlength="80" aria-label="話タイトル" />
+              <button class="editor-nav-button" id="editorDoneButton" type="button">完了</button>
               <span id="editorUpdatedAt" class="editor-updated-at"></span>
-            </div>
+            </header>
             <div class="writing-surface">
               <pre id="writingGuide" class="writing-guide" aria-hidden="true"></pre>
               <pre id="pageGuide" class="page-guide" aria-hidden="true"></pre>
@@ -196,6 +197,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=50"></script>
+    <script src="./app.js?v=51"></script>
   </body>
 </html>

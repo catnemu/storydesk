@@ -85,6 +85,7 @@ const elements = {
   backToProjectsButton: document.querySelector("#backToProjectsButton"),
   backToChaptersButton: document.querySelector("#backToChaptersButton"),
   editorBackButton: document.querySelector("#editorBackButton"),
+  editorDoneButton: document.querySelector("#editorDoneButton"),
   focusButton: document.querySelector("#focusButton"),
   focusExitButton: document.querySelector("#focusExitButton"),
   exportButton: document.querySelector("#exportButton"),
@@ -471,7 +472,9 @@ function openChapterForWriting(chapterId) {
   project.activeChapterId = chapterId;
   currentView = "editor";
   render();
-  setFocusMode(true);
+  document.body.classList.remove("shortcut-menu-open");
+  document.body.classList.add("editor-writing-active");
+  elements.shortcutToggleButton.textContent = "⌃";
   moveEditorToEnd();
   scheduleSave();
 }
@@ -493,7 +496,7 @@ function moveEditorToEnd() {
 }
 
 function backToChapterIndex() {
-  setFocusMode(false);
+  document.body.classList.remove("editor-writing-active", "shortcut-menu-open");
   currentView = "index";
   render();
 }
@@ -1070,6 +1073,7 @@ elements.chapterBody.addEventListener("compositionend", () => {
   scheduleCursorScroll();
 });
 elements.chapterBody.addEventListener("focus", () => {
+  document.body.classList.add("editor-writing-active");
   setShortcutBarActive(true);
   scheduleCursorScroll();
 });
@@ -1141,6 +1145,12 @@ elements.backToChaptersButton.addEventListener("click", () => {
 });
 
 elements.editorBackButton.addEventListener("click", backToChapterIndex);
+elements.editorDoneButton.addEventListener("click", () => {
+  document.body.classList.remove("editor-writing-active", "shortcut-menu-open");
+  elements.shortcutToggleButton.textContent = "⌃";
+  elements.chapterBody.blur();
+  saveStateNow();
+});
 
 elements.projectListButton.addEventListener("click", () => {
   currentView = "projects";

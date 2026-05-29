@@ -1547,40 +1547,56 @@ body {
 }
 
 .editor-panel {
-  grid-template-rows: auto minmax(420px, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   border: 0;
   border-radius: 0;
   background: var(--paper);
   box-shadow: none;
 }
 
-.editor-meta {
+.editor-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 8;
   display: grid;
-  gap: 26px;
-  max-width: 780px;
-  margin: 68px auto 18px;
-  padding: 0 30px;
+  grid-template-columns: 72px minmax(0, 1fr) 56px;
+  align-items: center;
+  min-height: 44px;
+  padding: max(8px, env(safe-area-inset-top)) 18px 6px;
+  background: rgba(23, 24, 24, 0.72);
+  backdrop-filter: blur(10px);
 }
 
-.editor-chapter-heading {
-  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
-  font-size: 1.58rem;
-  font-weight: 600;
-  line-height: 1.5;
+.editor-nav-button {
+  min-height: 30px;
+  padding: 0;
+  color: rgba(238, 238, 234, 0.62);
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .editor-updated-at {
-  color: var(--muted);
+  display: none;
+}
+
+.editor-chapter-heading {
+  width: 100%;
+  border: 0;
+  color: rgba(238, 238, 234, 0.72);
+  background: transparent;
+  outline: none;
   font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
-  font-size: 0.98rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  line-height: 1.3;
   text-align: center;
-  opacity: 0.55;
 }
 
 #chapterBody,
 .writing-guide,
 .page-guide {
-  padding: 34px max(30px, calc((100vw - 780px) / 2)) 116px;
+  padding: 26px max(30px, calc((100vw - 780px) / 2)) 78px;
   font-size: 1.02rem;
   line-height: 1.78;
 }
@@ -1646,23 +1662,11 @@ body {
 }
 
 body.focus-mode .editor-back-button {
-  top: max(18px, env(safe-area-inset-top));
-  bottom: auto;
-  left: 18px;
-  right: auto;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  font-size: 1.15rem;
-  opacity: 0.62;
+  display: none;
 }
 
 body.focus-mode .workspace {
   background: var(--paper);
-}
-
-body.focus-mode .editor-meta {
-  margin-top: 74px;
 }
 
 body.focus-mode .writing-surface,
@@ -1670,6 +1674,34 @@ body.focus-mode #chapterBody,
 body.focus-mode .writing-guide,
 body.focus-mode .page-guide {
   min-height: calc(100dvh - 232px);
+}
+
+body.editor-mode .sidebar,
+body.editor-mode .topbar {
+  display: none !important;
+}
+
+body.editor-mode .app-shell,
+body.editor-mode .editor-layout {
+  display: block;
+}
+
+body.editor-mode .workspace {
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+}
+
+body.editor-mode .editor-panel {
+  min-height: 100dvh;
+}
+
+body.editor-mode .writing-surface,
+body.editor-mode #chapterBody,
+body.editor-mode .writing-guide,
+body.editor-mode .page-guide {
+  min-height: calc(100dvh - 88px);
 }
 
 @media (max-width: 620px) {
@@ -1726,14 +1758,21 @@ body.focus-mode .page-guide {
     padding: 0 30px;
   }
 
+  .editor-topbar {
+    grid-template-columns: 68px minmax(0, 1fr) 52px;
+    min-height: 40px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
   .editor-chapter-heading {
-    font-size: 1.42rem;
+    font-size: 0.9rem;
   }
 
   #chapterBody,
   .writing-guide,
   .page-guide {
-    padding: 28px 30px 96px;
+    padding: 20px 30px 70px;
     font-size: 1rem;
     line-height: 1.72;
   }
