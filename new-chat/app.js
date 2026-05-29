@@ -421,7 +421,7 @@ function render() {
   elements.indexPageLinesInput.value = project.pageLines;
   elements.pageLinesHint.textContent = `${project.pageLines}行ごとに改ページを表示`;
   elements.chapterTitle.value = chapter.title;
-  elements.editorChapterHeading.value = chapter.title;
+  elements.editorChapterHeading.textContent = chapter.title;
   elements.editorUpdatedAt.textContent = formatDateTime(chapter.updatedAt);
   elements.chapterStatus.value = chapter.status || "draft";
   elements.chapterBody.value = chapter.body;
@@ -748,7 +748,7 @@ function updateActiveChapter(field, value) {
 
   if (field === "title") {
     elements.chapterTitle.value = value;
-    elements.editorChapterHeading.value = value;
+    elements.editorChapterHeading.textContent = value;
   }
   renderChapterList();
   renderProjectList();
@@ -1055,7 +1055,6 @@ elements.indexPageLinesInput.addEventListener("blur", () => {
 });
 
 elements.chapterTitle.addEventListener("input", (event) => updateActiveChapter("title", event.target.value));
-elements.editorChapterHeading.addEventListener("input", (event) => updateActiveChapter("title", event.target.value));
 elements.chapterStatus.addEventListener("change", (event) => updateActiveChapter("status", event.target.value));
 elements.chapterBody.addEventListener("input", (event) => updateActiveChapter("body", event.target.value));
 elements.chapterBody.addEventListener("scroll", syncGuideScroll);
